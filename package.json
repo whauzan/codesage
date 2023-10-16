@@ -13,6 +13,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@clerk/nextjs": "^4.25.4",
     "@tailwindcss/typography": "^0.5.10",
     "eslint-config-prettier": "^9.0.0",
     "eslint-config-standard": "^17.1.0",
