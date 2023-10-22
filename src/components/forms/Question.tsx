@@ -20,6 +20,8 @@ import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { useTheme } from "@/context/ThemeProvider";
+import { createQuestion } from "@/lib/actions/question.action";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
   type?: string;
@@ -31,6 +33,8 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const router = useRouter();
+  const pathname = usePathname();
 
   const parsedQuestionDetails =
     questionDetails && JSON.parse(questionDetails || "");
@@ -50,8 +54,21 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
     setIsSubmitting(true);
 
     try {
-      console.log(values);
+      if (type === "edit") {
+        console.log(values);
+      } else {
+        await createQuestion({
+          title: values.title,
+          content: values.explanation,
+          tags: values.tags,
+          author: JSON.parse(mongoUserId),
+          path: pathname,
+        });
+
+        router.push("/");
+      }
     } catch (err: any) {
+      console.log(err);
     } finally {
       setIsSubmitting(false);
     }
