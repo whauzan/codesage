@@ -74,3 +74,18 @@ export interface GetAllTagsParams {
   filter?: string;
   searchQuery?: string;
 }
+export interface QuestionVoteParams {
+  questionId: string;
+  userId: string;
+  hasupVoted: boolean;
+  hasdownVoted: boolean;
+  path: string;
+}
+
+export interface AnswerVoteParams {
+  answerId: string;
+  userId: string;
+  hasupVoted: boolean;
+  hasdownVoted: boolean;
+  path: string;
+}
