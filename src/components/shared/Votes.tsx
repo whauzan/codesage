@@ -6,11 +6,11 @@ import {
   downvoteQuestion,
   upvoteQuestion,
 } from "@/lib/actions/question.action";
-// import { toggleSaveQuestion } from "@/lib/actions/user.action";
+import { toggleSaveQuestion } from "@/lib/actions/user.action";
 import { formatAndDivideNumber } from "@/lib/utils";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { usePathname } from "next/navigation";
+// import { useEffect } from "react";
 import { toast } from "../ui/use-toast";
 
 interface Props {
@@ -35,14 +35,14 @@ const Votes = ({
   hasSaved,
 }: Props) => {
   const pathname = usePathname();
-  const router = useRouter();
+  // const router = useRouter();
 
   const handleSave = async () => {
-    // await toggleSaveQuestion({
-    //   userId: JSON.parse(userId),
-    //   questionId: JSON.parse(itemId),
-    //   path: pathname,
-    // })
+    await toggleSaveQuestion({
+      userId: JSON.parse(userId),
+      questionId: JSON.parse(itemId),
+      path: pathname,
+    });
 
     return toast({
       title: `Question ${
@@ -111,12 +111,12 @@ const Votes = ({
     }
   };
 
-  useEffect(() => {
-    // viewQuestion({
-    //   questionId: JSON.parse(itemId),
-    //   userId: userId ? JSON.parse(userId) : undefined,
-    // })
-  }, [itemId, userId, pathname, router]);
+  // useEffect(() => {
+  // viewQuestion({
+  //   questionId: JSON.parse(itemId),
+  //   userId: userId ? JSON.parse(userId) : undefined,
+  // })
+  // }, [itemId, userId, pathname, router]);
 
   return (
     <div className="flex gap-5">
