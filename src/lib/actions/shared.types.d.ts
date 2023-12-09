@@ -103,3 +103,8 @@ export interface GetSavedQuestionsParams {
   filter?: string;
   searchQuery?: string;
 }
+
+export interface ViewQuestionParams {
+  questionId: string;
+  userId: string | undefined;
+}
