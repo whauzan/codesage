@@ -121,3 +121,20 @@ export interface GetUserStatsParams {
   page?: number;
   pageSize?: number;
 }
+
+export interface DeleteQuestionParams {
+  questionId: string;
+  path: string;
+}
+
+export interface DeleteAnswerParams {
+  answerId: string;
+  path: string;
+}
+
+export interface EditQuestionParams {
+  questionId: string;
+  title: string;
+  content: string;
+  path: string;
+}

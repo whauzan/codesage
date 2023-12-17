@@ -20,7 +20,7 @@ import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { useTheme } from "@/context/ThemeProvider";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
@@ -35,6 +35,8 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  console.log(mongoUserId);
 
   const parsedQuestionDetails =
     questionDetails && JSON.parse(questionDetails || "");
@@ -54,8 +56,14 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
     setIsSubmitting(true);
 
     try {
-      if (type === "edit") {
-        console.log(values);
+      if (type === "Edit") {
+        await editQuestion({
+          title: values.title,
+          content: values.explanation,
+          questionId: parsedQuestionDetails._id,
+          path: pathname,
+        });
+        router.push(`/question/${parsedQuestionDetails._id}`);
       } else {
         await createQuestion({
           title: values.title,

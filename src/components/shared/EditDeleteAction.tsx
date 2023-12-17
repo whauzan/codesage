@@ -1,9 +1,9 @@
 "use client";
 
-// import { deleteAnswer } from "@/lib/actions/answer.action";
-// import { deleteQuestion } from "@/lib/actions/question.action";
+import { deleteAnswer } from "@/lib/actions/answer.action";
+import { deleteQuestion } from "@/lib/actions/question.action";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface Props {
   type: string;
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const EditDeleteAction = ({ type, itemId }: Props) => {
-  //   const pathname = usePathname();
+  const pathname = usePathname();
   const router = useRouter();
 
   const handleEdit = () => {
@@ -19,19 +19,19 @@ const EditDeleteAction = ({ type, itemId }: Props) => {
   };
 
   const handleDelete = async () => {
-    // if(type === 'Question') {
-    //   // Delete question
-    //   await deleteQuestion({
-    //     questionId: JSON.parse(itemId),
-    //     path: pathname
-    //   })
-    // } else if(type === 'Answer') {
-    //   // Delete answer
-    //   await deleteAnswer({
-    //     answerId: JSON.parse(itemId),
-    //     path: pathname
-    //   })
-    // }
+    if (type === "Question") {
+      // Delete question
+      await deleteQuestion({
+        questionId: JSON.parse(itemId),
+        path: pathname,
+      });
+    } else if (type === "Answer") {
+      // Delete answer
+      await deleteAnswer({
+        answerId: JSON.parse(itemId),
+        path: pathname,
+      });
+    }
   };
 
   return (
