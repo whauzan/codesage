@@ -74,6 +74,30 @@ export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
   );
 };
 
+interface RemoveUrlQueryParams {
+  params: string;
+  keysToRemove: string[];
+}
+
+export const removeKeysFromQuery = ({
+  params,
+  keysToRemove,
+}: RemoveUrlQueryParams) => {
+  const currentUrl = qs.parse(params);
+
+  keysToRemove.forEach((key) => {
+    delete currentUrl[key];
+  });
+
+  return qs.stringifyUrl(
+    {
+      url: window.location.pathname,
+      query: currentUrl,
+    },
+    { skipNull: true },
+  );
+};
+
 export const getJoinedDate = (date: Date): string => {
   // Extract the month and year from the Date object
   const month = date.toLocaleString("default", { month: "long" });
