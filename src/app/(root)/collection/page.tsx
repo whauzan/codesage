@@ -1,5 +1,4 @@
 import QuestionCard from "@/components/cards/QuestionCard";
-import HomeFilter from "@/components/home/HomeFilter";
 import Filter from "@/components/shared/Filter";
 import NoResult from "@/components/shared/NoResult";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
@@ -17,6 +16,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
   const result = await getSavedQuestions({
     clerkId: userId,
     searchQuery: searchParams.q,
+    filter: searchParams.filter,
   });
 
   return (
@@ -33,12 +33,9 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
         />
         <Filter
           filters={QuestionFilters}
-          otherClasses="min-h-[56px] sm:min-w-170px"
-          containerClasses="hidden max-md:flex"
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
         />
       </div>
-
-      <HomeFilter />
 
       <div className="mt-10 flex w-full flex-col gap-6">
         {result?.questions.length! > 0 ? (
