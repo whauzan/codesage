@@ -11,6 +11,10 @@ export async function viewQuestion(params: ViewQuestionParams) {
 
     const { questionId, userId } = params;
 
+    const question = await Question.findById(questionId);
+
+    if (!question) return console.log("Question not found");
+
     await Question.findByIdAndUpdate(questionId, { $inc: { views: 1 } });
 
     if (userId) {
@@ -26,6 +30,7 @@ export async function viewQuestion(params: ViewQuestionParams) {
         user: userId,
         action: "view",
         question: questionId,
+        tags: question?.tags,
       });
     }
   } catch (error) {
