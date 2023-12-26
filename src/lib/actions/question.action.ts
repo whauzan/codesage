@@ -35,7 +35,11 @@ export async function createQuestion(params: CreateQuestionParams) {
     for (const tag of tags) {
       const existingTag = await Tag.findOneAndUpdate(
         { name: { $regex: new RegExp(`^${tag}$`, "i") } },
-        { $setOnInsert: { name: tag }, $push: { questions: question._id } },
+        {
+          $setOnInsert: { name: tag },
+          $push: { questions: question._id },
+          $inc: { questionsCount: 1 },
+        },
         { upsert: true, new: true },
       );
 
@@ -233,7 +237,7 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
     await Interaction.deleteMany({ question: questionId });
     await Tag.updateMany(
       { questions: questionId },
-      { $pull: { questions: questionId } },
+      { $pull: { questions: questionId }, $inc: { questionsCount: -1 } },
     );
 
     revalidatePath(path);

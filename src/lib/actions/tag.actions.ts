@@ -10,6 +10,7 @@ import {
 import { FilterQuery } from "mongoose";
 import Tag, { ITag } from "@/database/tag.model";
 import Question from "@/database/question.model";
+import Interaction from "@/database/interaction.model";
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
@@ -24,10 +25,19 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
     // Find interactions for the user and group by tags...
     // Interaction...
 
-    return [
-      { _id: "1", name: "tag" },
-      { _id: "2", name: "tag2" },
-    ];
+    const interactions = await Interaction.aggregate([
+      { $match: { user: user._id } },
+      { $unwind: "$tags" },
+      { $group: { _id: "$tags", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 3 },
+    ]);
+
+    const tagIds = interactions.map((interaction) => interaction._id);
+
+    const tags = await Tag.find({ _id: { $in: tagIds } });
+
+    return tags;
   } catch (error) {
     console.log(error);
     throw error;
@@ -51,16 +61,16 @@ export async function getAllTags(params: GetAllTagsParams) {
 
     switch (filter) {
       case "popular":
-        sortOptions = { questions: -1 };
+        sortOptions = { questionsCount: -1 };
         break;
       case "recent":
-        sortOptions = { createdAt: -1 };
+        sortOptions = { createdOn: -1 };
         break;
       case "name":
         sortOptions = { name: 1 };
         break;
       case "old":
-        sortOptions = { createdAt: 1 };
+        sortOptions = { createdOn: 1 };
         break;
 
       default:
@@ -87,32 +97,46 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
   try {
     connect();
 
-    const { tagId, searchQuery } = params;
+    const { tagId, searchQuery, page = 1, pageSize = 10 } = params;
+    const skipAmount = (page - 1) * pageSize;
 
     const tagFilter: FilterQuery<ITag> = { _id: tagId };
 
-    const tag = await Tag.findOne(tagFilter).populate({
-      path: "questions",
-      model: Question,
-      match: searchQuery
-        ? { title: { $regex: searchQuery, $options: "i" } }
-        : {},
-      options: {
-        sort: { createdAt: -1 },
-      },
-      populate: [
-        { path: "tags", model: Tag, select: "_id name" },
-        { path: "author", model: User, select: "_id clerkId name picture" },
-      ],
-    });
+    const [tag, totalQuestions] = await Promise.all([
+      Tag.findOne(tagFilter).populate({
+        path: "questions",
+        model: Question,
+        match: searchQuery
+          ? { title: { $regex: searchQuery, $options: "i" } }
+          : {},
+        options: {
+          sort: { createdAt: -1 },
+          skip: skipAmount,
+          limit: pageSize,
+        },
+        populate: [
+          { path: "tags", model: Tag, select: "_id name" },
+          { path: "author", model: User, select: "_id clerkId name picture" },
+        ],
+      }),
+
+      Question.countDocuments({
+        tags: tagId,
+        ...(searchQuery
+          ? { title: { $regex: searchQuery, $options: "i" } }
+          : {}),
+      }),
+    ]);
 
     if (!tag) {
       throw new Error("Tag not found");
     }
 
+    const isNext = page * pageSize < totalQuestions;
+
     const questions = tag.questions;
 
-    return { tagTitle: tag.name, questions };
+    return { tagTitle: tag.name, questions, isNext };
   } catch (error) {
     console.log(error);
     throw error;

@@ -188,7 +188,9 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     connect();
 
-    const { clerkId, searchQuery, filter } = params;
+    const { clerkId, searchQuery, filter, page = 1, pageSize = 2 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
 
     const query: FilterQuery<typeof Question> = searchQuery
       ? { title: { $regex: new RegExp(searchQuery, "i") } }
@@ -210,32 +212,38 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
         sortOptions = { views: -1 };
         break;
       case "most_answered":
-        sortOptions = { answers: -1 };
+        sortOptions = { answersCount: -1 };
         break;
 
       default:
         break;
     }
 
-    const user = await User.findOne({ clerkId }).populate({
-      path: "saved",
-      match: query,
-      options: {
-        sort: sortOptions,
-      },
-      populate: [
-        { path: "tags", model: Tag, select: "_id name" },
-        { path: "author", model: User, select: "_id clerkId name picture" },
-      ],
-    });
+    const [user, totalItems] = await Promise.all([
+      User.findOne({ clerkId }).populate({
+        path: "saved",
+        match: query,
+        options: {
+          sort: sortOptions,
+          skip: skipAmount,
+          limit: pageSize,
+        },
+        populate: [
+          { path: "tags", model: Tag, select: "_id name" },
+          { path: "author", model: User, select: "_id clerkId name picture" },
+        ],
+      }),
+      User.aggregate([
+        { $match: { clerkId } },
+        { $unwind: "$saved" },
+        { $match: query },
+        { $count: "count" },
+      ]),
+    ]);
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+    const isNext = page * pageSize < totalItems[0].count;
 
-    const savedQuestions = user.saved;
-
-    return { questions: savedQuestions };
+    return { questions: user.saved, isNext };
   } catch (error) {
     console.log(error);
     throw error;
