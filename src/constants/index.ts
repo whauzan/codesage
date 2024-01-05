@@ -71,3 +71,12 @@ export const BADGE_CRITERIA = {
     GOLD: 100000,
   },
 };
+
+export const GLOBAL_SEARCH_CATEGORIES = [
+  { type: "question", icon: "/assets/icons/question.svg" },
+  { type: "answer", icon: "/assets/icons/answer.svg" },
+  { type: "user", icon: "/assets/icons/user.svg" },
+  { type: "tag", icon: "/assets/icons/tag.svg" },
+  { type: "collection", icon: "/assets/icons/star.svg" },
+  { type: "job", icon: "/assets/icons/suitcase.svg" },
+];
