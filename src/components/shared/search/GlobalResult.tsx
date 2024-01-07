@@ -60,7 +60,6 @@ const GlobalResult = () => {
       fetchResult();
     }
   }, [global, type]);
-  console.log(result);
 
   const renderLink = (type: string, id: string) => {
     switch (type) {

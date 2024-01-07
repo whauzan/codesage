@@ -116,6 +116,12 @@ interface BadgeParam {
   }[];
 }
 
+type BadgeLevels = {
+  GOLD: number;
+  SILVER: number;
+  BRONZE: number;
+};
+
 export const assignBadges = (params: BadgeParam) => {
   const badgeCounts: BadgeCounts = {
     GOLD: 0,
@@ -127,10 +133,10 @@ export const assignBadges = (params: BadgeParam) => {
 
   criteria.forEach((item) => {
     const { type, count } = item;
-    const badgeLevels: any = BADGE_CRITERIA[type];
+    const badgeLevels: BadgeLevels = BADGE_CRITERIA[type];
 
-    Object.keys(badgeLevels).forEach((level: any) => {
-      if (count >= badgeLevels[level]) {
+    Object.keys(badgeLevels).forEach((level: string) => {
+      if (count >= badgeLevels[level as keyof BadgeLevels]) {
         badgeCounts[level as keyof BadgeCounts] += 1;
       }
     });
