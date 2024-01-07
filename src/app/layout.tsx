@@ -23,6 +23,9 @@ export const metadata: Metadata = {
   title: "CodeSage - Where Developers Learn and Grow Together",
   description:
     "CodeSage: Where Developers Thrive. Join a vibrant community of coding enthusiasts and software wizards. Share knowledge, collaborate on projects, and unlock the secrets of code mastery. Elevate your coding journey with a community that inspires growth and fosters innovation. Welcome to the realm of CodeSage, where brilliance meets camaraderie.",
+  icons: {
+    icon: "/assets/images/site-logo.svg",
+  },
 };
 
 export default function RootLayout({

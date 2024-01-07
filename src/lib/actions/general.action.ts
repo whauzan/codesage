@@ -46,8 +46,8 @@ export async function globalSearch(params: SearchParams) {
               type === "user"
                 ? item.clerkId
                 : type === "answer"
-                ? item.question
-                : item._id,
+                  ? item.question
+                  : item._id,
           })),
         );
       }
@@ -73,8 +73,8 @@ export async function globalSearch(params: SearchParams) {
           type === "user"
             ? item.clerkId
             : type === "answer"
-            ? item.question
-            : item._id,
+              ? item.question
+              : item._id,
       }));
     }
 
