@@ -28,7 +28,7 @@ interface Props {
 const Answer = ({ question, questionId, authorId }: Props) => {
   const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmittingAI, setSetIsSubmittingAI] = useState(false);
+  const [isSubmittingAI, setIsSubmittingAI] = useState(false);
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const form = useForm<z.infer<typeof AnswerSchema>>({
@@ -66,7 +66,7 @@ const Answer = ({ question, questionId, authorId }: Props) => {
   const generateAIAnswer = async () => {
     if (!authorId) return;
 
-    setSetIsSubmittingAI(true);
+    setIsSubmittingAI(true);
 
     try {
       const response = await fetch(
@@ -92,7 +92,7 @@ const Answer = ({ question, questionId, authorId }: Props) => {
     } catch (error) {
       console.log(error);
     } finally {
-      setSetIsSubmittingAI(false);
+      setIsSubmittingAI(false);
     }
   };
 
