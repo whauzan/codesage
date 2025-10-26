@@ -58,12 +58,16 @@ export async function POST(req: Request) {
     const { id, email_addresses, image_url, username, first_name, last_name } =
       evt.data;
 
+    // Use email prefix as default username if username is not provided
+    const userEmail = email_addresses[0].email_address;
+    const defaultUsername = userEmail.split("@")[0];
+
     const mongoUser = await createUser({
       clerkId: id,
       name: last_name ? `${first_name} ${last_name}` : `${first_name}`,
-      email: email_addresses[0].email_address,
+      email: userEmail,
       picture: image_url,
-      username: username!,
+      username: username || defaultUsername,
     });
 
     return NextResponse.json({ message: "OK", user: mongoUser });
@@ -73,12 +77,16 @@ export async function POST(req: Request) {
     const { id, email_addresses, image_url, username, first_name, last_name } =
       evt.data;
 
+    // Use email prefix as default username if username is not provided
+    const userEmail = email_addresses[0].email_address;
+    const defaultUsername = userEmail.split("@")[0];
+
     const mongoUser = await updateUser({
       clerkId: id,
       updateData: {
         name: last_name ? `${first_name} ${last_name}` : `${first_name}`,
-        username: username!,
-        email: email_addresses[0].email_address,
+        username: username || defaultUsername,
+        email: userEmail,
         picture: image_url,
       },
       path: `/profile/${id}`,
